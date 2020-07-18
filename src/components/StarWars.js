@@ -27,7 +27,7 @@ export default class StarWars extends Component {
     }
     showAll(e) {
         return (
-            characterDeets()
+            characterDeets(useState)
         )
     }
 
@@ -41,4 +41,43 @@ export default class StarWars extends Component {
 
     }
 
+    async savePerson() {
+        let {data, characterDeets } = this.state
+        characterDeets.push(data)
+        this.setState({ data, characterDeets })
+    }
     
+    renderData() {
+        const { data } = this.state
+        return (
+            <div>
+            <h3>Name:{data.name}</h3>
+            <h3>Height:{data.height}</h3>
+            <h3>Weight:{data.mass}</h3>
+            <h3>Eye Color:{data.eye_color}</h3>
+            <h3>Hair Color:{data.hair_color}</h3>
+            {/* <h3>Homeworld:{homeworldData.name}</h3> */}
+            <button onClick={this.savePerson}>Save</button>
+            </div>
+        )
+    }
+
+    render(){
+        const { number, characterDeets, data } = this.state
+        return (
+            <div>
+                <h3>Star Wars Data</h3>
+                <form onSubmit={this.onSubmit}>
+                <input type="text" placeholder="Enter Number" value={number} onChange={this.onChange}/>
+                <button type="submit" value="search" onClick={this.onClick}>Search</button>
+                <button onClick={this.showAll}>Show List </button>
+                </form>
+                <div>
+                    {data !== '' ? this.renderData() : null}
+                </div>
+                <characterDeets character={characterDeets}/>
+            </div>
+        )
+    }
+    
+}
