@@ -1,83 +1,117 @@
-import React, { Component, useState } from 'react';
-import characterDeets from './Characters';
+import React, { Component } from 'react'
+import Title from './Title'
+// import lists from '../reducers/lists'
+import './StarWars.css'
 
-export default class StarWars extends Component {
-    
-    constructor(props){
-        super(props);
+class StarWars extends Component {
+    constructor(props) {
+        super(props)
+
         this.state = {
-            data: '',
-            number: '',
-            characterDeets: []
-        };
-        this.onChange=this.onChange.bind(this)
-        this.onClick=this.onClick.bind(this)
-        this.onSubmit = this.onSubmit.bind(this)
-        this.savePerson = this.savePerson.bind(this)
-        this.showAll = this.showAll.bind(this)
-    };
-
-    onChange = evt =>{
-        const number = evt.target.value
-        this.setState({ number })
-    }
-
-    onSubmit(e) {
-        e.preventDefault()
-    }
-    showAll(e) {
-        return (
-            characterDeets(useState)
-        )
-    }
-
-    async onClick() {
-        const { number } = this.state
-        const response = await fetch(`https://swapi.dev/api/people/${number}/`);
-        const data = await response.json();
-        if (data.detail !== "Not There") {
-            this.setState({ data })
+            inputValue: '',
+            starwarsData: null,
+            list: [],
+            planetData: null,
         }
-
     }
 
-    async savePerson() {
-        let {data, characterDeets } = this.state
-        characterDeets.push(data)
-        this.setState({ data, characterDeets })
+    handleSubmit(e) {
+        const { inputValue } = this.state
+        e.preventDefault()
+        const num = inputValue
+        const url = `https://swapi.dev/api/people/${num}`
+        const planetURL = `https://swapi.dev/api/planets/${num}/`
+
+        const response = fetch(url)
+        const planetResponse = fetch(planetURL)
+
+        response.then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+        }).then((json) => {
+            this.setState({ starwarsData: json })
+        }).catch((err) => {
+            this.setState({ starwarsData: null })
+        })
+
+        planetResponse.then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+        }).then((json) => {
+            this.setState({ planetData: json })
+        }).catch((err) => {
+            this.setState({ planetData: null })
+        })
     }
-    
-    renderData() {
-        const { data } = this.state
+
+    addCharacterToList(value) {
+        this.setState({
+            list: [...this.state.list, value]
+        })
+    }
+
+    renderCharacterList() {
+        const { list } = this.state
+        const characters = list.map((item) => {
+            return <div>{item}</div>
+        })
+        return characters
+    }
+
+    renderCharacter() {
+        const { starwarsData, planetData } = this.state
+        if (starwarsData === null) {
+            return undefined
+          }
+
+        const { name, height, mass, hair_color, eye_color } = starwarsData
+
         return (
-            <div>
-            <h3>Name:{data.name}</h3>
-            <h3>Height:{data.height}</h3>
-            <h3>Weight:{data.mass}</h3>
-            <h3>Eye Color:{data.eye_color}</h3>
-            <h3>Hair Color:{data.hair_color}</h3>
-            {/* <h3>Homeworld:{homeworldData.name}</h3> */}
-            <button onClick={this.savePerson}>Save</button>
+            <div className="character-details">
+                <Title name={name} />
+                <p>Height: {height}</p>
+                <p>Mass: {mass}</p>
+                <p>Hair Color: {hair_color}</p>
+                <p>Eye Color: {eye_color}</p>
+                <p>Homeworld: {planetData.name}</p>
+                <button
+                    onClick={(e) =>
+                        this.addCharacterToList(name)
+                    }>Save</button>
             </div>
         )
+
     }
 
-    render(){
-        const { number, characterDeets, data } = this.state
+    render() {
+        const {inputValue} = this.state
+        const character = this.renderCharacter()
+        const characterList = this.renderCharacterList()
+
         return (
             <div>
-                <h3>Star Wars Data</h3>
-                <form onSubmit={this.onSubmit}>
-                <input type="text" placeholder="Enter Number" value={number} onChange={this.onChange}/>
-                <button type="submit" value="search" onClick={this.onClick}>Search</button>
-                <button onClick={this.showAll}>Show List </button>
+                <form
+                    className="input-form"
+                    onSubmit={
+                        e => this.handleSubmit(e)
+                    }>
+                    <input
+                        value={inputValue}
+                        onChange={e =>
+                            this.setState({ inputValue: e.target.value })}
+                            placeholder="Enter a #, Jedi!"
+                        />
+                    <button>Submit</button>
                 </form>
-                <div>
-                    {data !== '' ? this.renderData() : null}
-                </div>
-                <characterDeets character={characterDeets}/>
+                {character}
+                Your Characters:
+                {characterList}
             </div>
+        
         )
     }
-    
 }
+
+export default StarWars

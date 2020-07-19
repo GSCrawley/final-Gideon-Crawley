@@ -8,8 +8,9 @@ function Home (props){
 
     return(
         <div>
-            <h1>FEW 2.3</h1>
+            <h3>FEW 2.3</h3>
             <Title name="Gideon Crawley" />
+            <Title name="My Star Wars Character Compendium" />
         </div>
     )
 }

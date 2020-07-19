@@ -1,7 +1,9 @@
 
 .App {
   width: 960px;
-  margin: auto;
+  margin: 2rem;
+  background-color: turquoise;
+  padding: 2rem;
 }
 
 input[type=text] {
@@ -11,7 +13,11 @@ input[type=text] {
   border-radius: 0.5em;
   margin: 20px;
 }
-
+/* 
 results {
   margin: 20px;
-} 
+}  */
+
+
+  
+
