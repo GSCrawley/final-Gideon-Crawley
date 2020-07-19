@@ -69,7 +69,7 @@ class StarWars extends Component {
         const { name, height, mass, hair_color, eye_color } = starwarsData
 
         return (
-            <div className="character-details">
+            <div className="characterDetails">
                 <Title name={name} />
                 <p>Height: {height}</p>
                 <p>Mass: {mass}</p>
